@@ -1,0 +1,44 @@
+Step by step config JDBC Realm using MVNForum Database
+1. Go to [MVNFORUM_HOME]\contrib\jdbcRealm\build.properties change some path 
+    commons-logging.jar = [MYVIETNAM_HOME]/lib/commons-logging-1.1.jar
+    driver.jar = [MVNFORUM_HOME]/driver/mysql-connector-java-3.0.17-ga-bin.jar
+    catalina.home=[CATALINA_HOME]
+
+2. Edit this realm for database connection in file when neccessary
+    [MVNFORUM_HOME]\contrib\jdbcRealm\conf\mvn-jdbc-realm.xml
+
+3. Replace Realm in [CATALINA_HOME]\conf\server.xml with a sample realm in file config/realm-server.xml
+
+    replace 
+    <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+                 debug="0" resourceName="UserDatabase"/>
+    with
+    <Realm className="com.mvnsoft.auth.realm.MVNTomcatJDBCRealm"
+                 debug="0" resourceName="UserDatabase"/>
+
+4. Enable single-sign-on in tomcat: go to file [CATALINA_HOME]\conf\server.xml uncomment this line:
+
+    <Valve className="org.apache.catalina.authenticator.SingleSignOn"
+                   debug="0"/>
+                   
+5. in mvnforum.xml modify:
+   - Enable this feature: "enable_login_info_in_customization".
+   - Config an authenticator: enter value "com.mvnforum.auth.SampleRealmAuthenticator"
+   into the option "authenticator_implementation"
+
+6. Run 
+    [MVNFORUM_HOME]\contrib\jdbcRealm>ant deploy-all
+    
+7. Start Tomcat
+
+8. Test with link: 
+http://<server_name>:<port>/mvn-jdbc-realm/realm/index.jsp or 
+http://<server_name>:<port>/mvn-jdbc-realm/realm/login.jsp
+
+NOTES:
+[CATALINA_HOME] is where Tomcat is installed
+[MVNFORUM_HOME] is where mvnforum is.
+By default, mvnforum has a only account: admin/admin.
+You can log in with this account
+
+9. After that you come to mvnforum's index page, you will see that user admin has already login into mvnforum.
